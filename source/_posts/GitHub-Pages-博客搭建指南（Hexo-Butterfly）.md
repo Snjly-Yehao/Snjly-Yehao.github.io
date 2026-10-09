@@ -6,6 +6,7 @@ tags: [算法, 数据结构]
 ---
 
 GitHub Pages 个人博客搭建指南（Hexo + Butterfly）
+
 > **目标**：在你的 GitHub 账号下用 `<你的用户名>.github.io` 跑起个人博客，用于整理学习资料、记录日志。
 > **方案**：Hexo（静态站点生成器）+ Butterfly（主题）+ GitHub Actions 自动构建部署——本地只写 Markdown，`git push` 后网站自动更新。
 > **适配环境**：macOS（zsh 终端），已确认本机具备 Node.js v24.7.0、npm 11.5.1、Git、gh CLI（已登录 GitHub）。
@@ -460,3 +461,124 @@ git remote set-url origin git@github.com:<你的用户名>/<你的用户名>.git
 7. 之后进入日常写作循环 → 第 8 节
 
 建议按顺序执行，每完成一步先本地验证（`hexo clean && hexo server`），再进入下一步。
+
+---
+
+## 12. 更换主题与备选主题速览
+
+> 本节是"外观进阶"篇：先教如何**不换主题**的前提下调整 Butterfly 样式，再给出**更换主题**的通用流程与当前可选的替代主题清单。
+
+### 12.1 先调 Butterfly 内置外观（不换主题）
+
+大多数"想换样式"的需求，改 `_config.butterfly.yml` 就能满足。改完执行 `hexo clean && hexo server` 即可看到效果。
+
+**① 首页布局 `index_layout`**——共 7 种可选，默认 `3`：
+
+| 值  | 效果                    |
+| --- | ----------------------- |
+| 1   | 左图右文                |
+| 2   | 右图左文                |
+| 3   | 左右交替（默认）        |
+| 4   | 上图下文                |
+| 5   | 文字覆盖在图上          |
+| 6   | 瀑布流 · 上图下文       |
+| 7   | 瀑布流 · 文字覆盖在图上 |
+
+**② 常用外观项一览**：
+
+```yaml
+# _config.butterfly.yml
+index_layout: 3 # 首页布局（1-7，见上表）
+
+theme_color:
+  main: "#49B1F5" # 主色调：先改这一个值整体换色（换主题前先试这个）
+
+darkmode:
+  enable: true # 深色模式
+  button: true # 右下角切换按钮
+  autoChangeMode: false # 跟随系统/时间自动切换
+
+display_mode: light # 默认显示模式：light / dark
+
+rounded_corners_ui: true # 全局圆角 UI
+text_align_justify: false # 正文两端对齐
+
+subtitle:
+  enable: true # 首页副标题（打字机效果）
+  effect: true # 打字动画
+  sub:
+    - 记录学习，整理思考
+```
+
+> 说明：`theme_color` 下还有 `paginator`（分页器）、`button_hover`、`link_color`、`code_foreground`、`scrollbar_color` 等约 16 项配色，可按需微调。
+
+### 12.2 更换主题的通用流程
+
+Hexo 换主题 = 换一个 npm 包 + 改一行配置，四步完成（以换到 Fluid 为例）：
+
+```bash
+# 1. 安装新主题（如新主题需要额外渲染器，按其文档补装）
+npm install hexo-theme-fluid --save
+
+# 2. 修改根目录 _config.yml：theme: butterfly → theme: fluid
+
+# 3. 复制主题配置到博客根目录做覆盖配置（与 Butterfly 相同的做法）
+cp node_modules/hexo-theme-fluid/_config.yml _config.fluid.yml
+
+# 4. 本地预览，确认无误后推送上线
+hexo clean && hexo server
+git add . && git commit -m "theme: switch to fluid" && git push
+```
+
+换主题注意事项：
+
+- **搜索、评论需要在新主题下重新配置**：`hexo-generator-searchdb` 插件仍可复用，但启用方式按新主题文档来（Butterfly 是 `search.use: local_search`）。
+- **回退很方便**：保留 `_config.butterfly.yml` 不删，把 `theme:` 改回 `butterfly` 即可完全恢复。
+- `source/` 下的文章内容完全不受换主题影响；front-matter 若用了新主题特有字段，仅在新主题下生效。
+
+### 12.3 备选主题清单（2026-10 时点，按 GitHub 星数）
+
+**综合全能型**（功能全、文档完善，适合长期写博客）：
+
+| 主题           | ★    | 最近活跃 | 地址 / 特点                                                    |
+| -------------- | ---- | -------- | -------------------------------------------------------------- |
+| Butterfly      | 8.4k | 2026-10  | https://butterfly.js.org （你当前在用）                        |
+| Fluid          | 8.2k | 2026-06  | https://hexo.fluid-dev.com                                     |
+| Icarus         | 6.6k | 2026-10  | https://ppoffice.github.io/hexo-theme-icarus/                  |
+| NexT（社区版） | 2.8k | 2026-10  | https://theme-next.js.org （原版作者仓库 15.7k★，2022 起停更） |
+| AnZhiYu        | 2.5k | 2026-05  | https://hexo.anheyu.com （文档 docs.anheyu.com）               |
+| Volantis       | 2.2k | 2026-09  | https://volantis.js.org                                        |
+| Stellar        | 2.1k | 2026-10  | https://xaoxuu.com/wiki/stellar/                               |
+| Redefine       | 2.0k | 2026-08  | https://redefine.ohevan.com                                    |
+| Solitude       | 1.2k | 2026-10  | https://solitude.js.org                                        |
+| Fomalhaut      | 1.0k | 2026-10  | https://www.fomal.cc （基于 Butterfly 二次开发）               |
+
+**极简 / 专注写作型**：
+
+| 主题   | ★    | 最近活跃 | 地址 / 特点                                       |
+| ------ | ---- | -------- | ------------------------------------------------- |
+| Cactus | 3.5k | 2024-08  | https://probberechts.github.io/hexo-theme-cactus/ |
+| Keep   | 1.4k | 2026-06  | https://xpoet.cn                                  |
+| Even   | 1.4k | 2025-03  | https://ahonn.github.io/hexo-theme-even/          |
+| Stun   | 0.6k | 2026-06  | https://theme-stun.github.io/docs/                |
+| A4     | 0.6k | 2026-03  | https://ninojay.top （A4 纸张质感）               |
+
+**二次元 / 动漫风**（此类主题更新节奏偏慢，长期维护性弱于综合型）：
+
+| 主题                  | ★    | 最近活跃 | 地址 / 特点                            |
+| --------------------- | ---- | -------- | -------------------------------------- |
+| Shoka                 | 1.0k | 2024-04  | 更新放缓                               |
+| Arknights（明日方舟） | 0.9k | 2026-07  | https://arknights.theme.hexo.yue.zone/ |
+| Reimu（东方灵梦风）   | 0.6k | 2026-08  | https://d-sketon.github.io             |
+
+**杂志 / 图片向**：
+
+| 主题         | ★    | 最近活跃 | 地址 / 特点                                                  |
+| ------------ | ---- | -------- | ------------------------------------------------------------ |
+| Tranquilpeak | 1.9k | 2026-08  | https://louisbarranqueiro.github.io/hexo-theme-tranquilpeak/ |
+| Nexmoe       | 1.7k | 2026-02  | https://docs.nexmoe.com                                      |
+| Chic         | 0.9k | 2026-01  | https://siricee.github.io/hexo-theme-Chic/                   |
+
+更多主题可查官方索引 https://hexo.io/themes 及社区汇总 https://github.com/hexojs/awesome-hexo 。
+
+> 选择建议：内容优先，选**长期稳定、文档齐全**的主题最重要（更新活跃度仅作参考）；换主题前先本地预览对比，满意再推送。
